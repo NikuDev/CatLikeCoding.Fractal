@@ -26,7 +26,7 @@ public class Fractal : MonoBehaviour
         
     private int _depth;
 
-    private Material[] _materials;
+    private Material[,] _materials;
 
     private static Vector3[] _childDirections =
     {
@@ -60,7 +60,8 @@ public class Fractal : MonoBehaviour
             this.InitializeMaterials();
         }
 
-        GetComponent<MeshRenderer>().material = this._materials[this._depth];
+        GetComponent<MeshRenderer>().material = 
+            this._materials[this._depth, Random.Range(0,2)];
 
         if(this._depth < MaxDepth)
         {
@@ -79,18 +80,23 @@ public class Fractal : MonoBehaviour
 
     private void InitializeMaterials()
     {
-        _materials = new Material[this.MaxDepth + 1];
+        this._materials = new Material[this.MaxDepth + 1, 2];
         for (int i = 0; i <= this.MaxDepth; i++)
         {
             float t = (float)i / (this.MaxDepth - 1f);
             t *= t;
 
-            _materials[i] = new Material(this.Material);
-            _materials[i].color =
+            this._materials[i,0] = new Material(this.Material);
+            this._materials[i,0].color =
                 Color.Lerp(Color.white, Color.red, t);
+
+            this._materials[i,1] = new Material(this.Material);
+            this._materials[i,1].color =
+                Color.Lerp(Color.white, Color.yellow, t);
         }
 
-        _materials[MaxDepth].color = Color.green;
+        this._materials[MaxDepth, 0].color = Color.green;
+        this._materials[MaxDepth, 1].color = Color.cyan;
     }
 
     /// <summary>
