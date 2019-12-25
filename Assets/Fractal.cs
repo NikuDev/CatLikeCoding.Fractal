@@ -33,7 +33,9 @@ public class Fractal : MonoBehaviour
     public float ChildScale;
 
     public float MaxRotationSpeed;
-        
+
+    public float MaxTwist;
+
     private int _depth;
 
     private float _rotationSpeed;
@@ -87,6 +89,9 @@ public class Fractal : MonoBehaviour
 
         // let's set a random rotationspeed for this instance
         this._rotationSpeed = Random.Range(-this.MaxRotationSpeed, this.MaxRotationSpeed);
+
+        // let's also set a random rotation for this instance
+        this.transform.Rotate(Random.Range(-this.MaxTwist, this.MaxTwist), 0f, 0f);
     }
 
     // Update is called once per frame
