@@ -23,7 +23,7 @@ public class Fractal : MonoBehaviour
     public int MaxDepth;
         
     public float ChildScale;
-
+        
     private int _depth;
 
     private Material[] _materials;
@@ -82,10 +82,15 @@ public class Fractal : MonoBehaviour
         _materials = new Material[this.MaxDepth + 1];
         for (int i = 0; i <= this.MaxDepth; i++)
         {
+            float t = (float)i / (this.MaxDepth - 1f);
+            t *= t;
+
             _materials[i] = new Material(this.Material);
             _materials[i].color =
-                Color.Lerp(Color.white, Color.red, (float)i / this.MaxDepth);
+                Color.Lerp(Color.white, Color.red, t);
         }
+
+        _materials[MaxDepth].color = Color.green;
     }
 
     /// <summary>
@@ -105,6 +110,7 @@ public class Fractal : MonoBehaviour
         for(int i=0; i < _childDirections.Length; i++)
         {
             yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
+
             new GameObject("Fractal Child")
                 .AddComponent<Fractal>()
                 .InitializeChild(this, i);
