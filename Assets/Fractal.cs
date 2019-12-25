@@ -37,12 +37,11 @@ public class Fractal : MonoBehaviour
 
         if(this._depth < MaxDepth)
         {
-            new GameObject("Fractal Child")
-                .AddComponent<Fractal>()
-                .InitializeChild(this, Vector3.up);
-            new GameObject("Fractal Child")
-                .AddComponent<Fractal>()
-                .InitializeChild(this, Vector3.right);
+
+            // When you're creating a coroutine in Unity, what you're really doing 
+            // is creating an iterator.When you pass it to the StartCoroutine method, it will get 
+            // stored and gets asked for its next item every frame, until it is finished.
+           StartCoroutine(this.CreateChildren());
         }
     }
 
@@ -53,11 +52,43 @@ public class Fractal : MonoBehaviour
     }
 
     /// <summary>
+    /// Think of coroutines as methods in which you can insert pause statements.
+    /// While the method invocation is paused, the rest of the program continues.
+    /// Though this point of view is too simplistic, it is all we need to make
+    /// use of it right now.
+    /// </summary>
+    private IEnumerator CreateChildren()
+    {
+        // The yield statement is used by iterators to make life easy for them. 
+        // To make enumeration possible, you'd need to keep track of your progress
+        // This involves some boilerplate code that is essentially always the 
+        // same. What you'd really want is to just write something like return 
+        // firstItem; return secondItem; until you are done. The yield statement 
+        // allows you to do exactly that.
+        yield return new WaitForSeconds(0.5f);
+        new GameObject("Fractal Child")
+            .AddComponent<Fractal>()
+            .InitializeChild(this, Vector3.up, Quaternion.identity);
+
+        yield return new WaitForSeconds(0.5f);
+        new GameObject("Fractal Child")
+            .AddComponent<Fractal>()
+            .InitializeChild(this, Vector3.right, Quaternion.Euler(0f, 0f, -90f));
+
+
+        yield return new WaitForSeconds(0.5f);
+        new GameObject("Fractal Child")
+            .AddComponent<Fractal>()
+            .InitializeChild(this, Vector3.left, Quaternion.Euler(0f, 0f, 90f));
+
+    }
+
+    /// <summary>
     /// To control the amount of Fractals instantiated, we need to copy
     /// some values from the parent and increase the depth
     /// </summary>
     /// <param name="parent">GameObject to add a new Fractal child to</param>
-    private void InitializeChild(Fractal parent, Vector3 direction)
+    private void InitializeChild(Fractal parent, Vector3 direction, Quaternion orientation)
     {
         this.Mesh = parent.Mesh;
         this.Material = parent.Material;
@@ -72,5 +103,7 @@ public class Fractal : MonoBehaviour
         this.transform.localScale = Vector3.one * this.ChildScale;
 
         this.transform.localPosition = direction * (0.5f + 0.5f * this.ChildScale);
+
+        this.transform.rotation = orientation;
     }
 }
