@@ -53,9 +53,11 @@ public class Fractal : MonoBehaviour
         gameObject.AddComponent<MeshFilter>().mesh = this.Mesh;
         gameObject.AddComponent<MeshRenderer>().material = this.Material;
 
+        GetComponent<MeshRenderer>().material.color =
+            Color.Lerp(Color.white, Color.red, (float)this._depth / this.MaxDepth);
+
         if(this._depth < MaxDepth)
         {
-
             // When you're creating a coroutine in Unity, what you're really doing 
             // is creating an iterator.When you pass it to the StartCoroutine method, it will get 
             // stored and gets asked for its next item every frame, until it is finished.
