@@ -16,6 +16,10 @@ public class Fractal : MonoBehaviour
     /// </summary>
     public Material Material;
 
+    /// <summary>
+    /// Array to hold the shapes which will be used in the generation of the
+    /// Fractal. (i.e. Cube, Sphere, Cylinder)
+    /// </summary>
     public Mesh[] _meshes;
 
     /// <summary>
@@ -23,13 +27,18 @@ public class Fractal : MonoBehaviour
     /// we use this property
     /// </summary>
     public int MaxDepth;
+
+    public float SpawnProbability;
         
     public float ChildScale;
+
+    public float MaxRotationSpeed;
         
     private int _depth;
 
-    private Material[,] _materials;
+    private float _rotationSpeed;
 
+    private Material[,] _materials;
 
     private static Vector3[] _childDirections =
     {
@@ -75,12 +84,15 @@ public class Fractal : MonoBehaviour
             // stored and gets asked for its next item every frame, until it is finished.
            StartCoroutine(this.CreateChildren());
         }
+
+        // let's set a random rotationspeed for this instance
+        this._rotationSpeed = Random.Range(-this.MaxRotationSpeed, this.MaxRotationSpeed);
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        this.transform.Rotate(0f, this._rotationSpeed * Time.deltaTime, 0f);
     }
 
     private void InitializeMaterials()
@@ -120,11 +132,14 @@ public class Fractal : MonoBehaviour
         // allows you to do exactly that.
         for(int i=0; i < _childDirections.Length; i++)
         {
-            yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
+            if(Random.value < this.SpawnProbability)
+            {
+                yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
 
-            new GameObject("Fractal Child")
-                .AddComponent<Fractal>()
-                .InitializeChild(this, i);
+                new GameObject("Fractal Child")
+                    .AddComponent<Fractal>()
+                    .InitializeChild(this, i);
+            }
         }
     }
 
@@ -139,6 +154,8 @@ public class Fractal : MonoBehaviour
         this.Material = parent.Material;
         this.MaxDepth = parent.MaxDepth;
         this.ChildScale = parent.ChildScale;
+        this.SpawnProbability = parent.SpawnProbability;
+        this.MaxRotationSpeed = parent.MaxRotationSpeed;
         this._meshes = parent._meshes;
         this._materials = parent._materials;
         this._depth = parent._depth + 1;
