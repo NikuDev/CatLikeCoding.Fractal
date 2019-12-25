@@ -39,7 +39,10 @@ public class Fractal : MonoBehaviour
         {
             new GameObject("Fractal Child")
                 .AddComponent<Fractal>()
-                .InitializeChild(this);
+                .InitializeChild(this, Vector3.up);
+            new GameObject("Fractal Child")
+                .AddComponent<Fractal>()
+                .InitializeChild(this, Vector3.right);
         }
     }
 
@@ -54,7 +57,7 @@ public class Fractal : MonoBehaviour
     /// some values from the parent and increase the depth
     /// </summary>
     /// <param name="parent">GameObject to add a new Fractal child to</param>
-    private void InitializeChild(Fractal parent)
+    private void InitializeChild(Fractal parent, Vector3 direction)
     {
         this.Mesh = parent.Mesh;
         this.Material = parent.Material;
@@ -68,6 +71,6 @@ public class Fractal : MonoBehaviour
 
         this.transform.localScale = Vector3.one * this.ChildScale;
 
-        this.transform.localPosition = Vector3.up * (0.5f + 0.5f * this.ChildScale);
+        this.transform.localPosition = direction * (0.5f + 0.5f * this.ChildScale);
     }
 }
