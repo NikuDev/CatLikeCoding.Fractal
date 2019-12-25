@@ -16,6 +16,8 @@ public class Fractal : MonoBehaviour
     /// </summary>
     public Material Material;
 
+    public Mesh[] _meshes;
+
     /// <summary>
     /// To control the maximum amount of GameObject instantiated for the Fractal,
     /// we use this property
@@ -27,6 +29,7 @@ public class Fractal : MonoBehaviour
     private int _depth;
 
     private Material[,] _materials;
+
 
     private static Vector3[] _childDirections =
     {
@@ -59,6 +62,8 @@ public class Fractal : MonoBehaviour
         {
             this.InitializeMaterials();
         }
+
+        GetComponent<MeshFilter>().mesh = this._meshes[Random.Range(0, this._meshes.Length)];
 
         GetComponent<MeshRenderer>().material = 
             this._materials[this._depth, Random.Range(0,2)];
@@ -134,6 +139,7 @@ public class Fractal : MonoBehaviour
         this.Material = parent.Material;
         this.MaxDepth = parent.MaxDepth;
         this.ChildScale = parent.ChildScale;
+        this._meshes = parent._meshes;
         this._materials = parent._materials;
         this._depth = parent._depth + 1;
 
