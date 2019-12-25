@@ -26,6 +26,8 @@ public class Fractal : MonoBehaviour
 
     private int _depth;
 
+    private Material[] _materials;
+
     private static Vector3[] _childDirections =
     {
         Vector3.up,
@@ -53,8 +55,12 @@ public class Fractal : MonoBehaviour
         gameObject.AddComponent<MeshFilter>().mesh = this.Mesh;
         gameObject.AddComponent<MeshRenderer>().material = this.Material;
 
-        GetComponent<MeshRenderer>().material.color =
-            Color.Lerp(Color.white, Color.red, (float)this._depth / this.MaxDepth);
+        if (this._materials == null)
+        {
+            this.InitializeMaterials();
+        }
+
+        GetComponent<MeshRenderer>().material = this._materials[this._depth];
 
         if(this._depth < MaxDepth)
         {
@@ -68,7 +74,18 @@ public class Fractal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+    private void InitializeMaterials()
+    {
+        _materials = new Material[this.MaxDepth + 1];
+        for (int i = 0; i <= this.MaxDepth; i++)
+        {
+            _materials[i] = new Material(this.Material);
+            _materials[i].color =
+                Color.Lerp(Color.white, Color.red, (float)i / this.MaxDepth);
+        }
     }
 
     /// <summary>
@@ -105,6 +122,7 @@ public class Fractal : MonoBehaviour
         this.Material = parent.Material;
         this.MaxDepth = parent.MaxDepth;
         this.ChildScale = parent.ChildScale;
+        this._materials = parent._materials;
         this._depth = parent._depth + 1;
 
         // The parent–child relationship between game objects is 
