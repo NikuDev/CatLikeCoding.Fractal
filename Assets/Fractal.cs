@@ -26,6 +26,24 @@ public class Fractal : MonoBehaviour
 
     private int _depth;
 
+    private static Vector3[] _childDirections =
+    {
+        Vector3.up,
+        Vector3.right,
+        Vector3.left,
+        Vector3.forward,
+        Vector3.back
+    };
+
+    private static Quaternion[] _childOrientations =
+    {
+        Quaternion.identity,
+        Quaternion.Euler(0f, 0f, -90f),
+        Quaternion.Euler(0f, 0f, 90f),
+        Quaternion.Euler(90f, 0f, 0f),
+        Quaternion.Euler(-90f, 0f, 0f)
+    };
+
 
     // Start is called before the first frame update
     void Start()
@@ -65,22 +83,13 @@ public class Fractal : MonoBehaviour
         // same. What you'd really want is to just write something like return 
         // firstItem; return secondItem; until you are done. The yield statement 
         // allows you to do exactly that.
-        yield return new WaitForSeconds(0.5f);
-        new GameObject("Fractal Child")
-            .AddComponent<Fractal>()
-            .InitializeChild(this, Vector3.up, Quaternion.identity);
-
-        yield return new WaitForSeconds(0.5f);
-        new GameObject("Fractal Child")
-            .AddComponent<Fractal>()
-            .InitializeChild(this, Vector3.right, Quaternion.Euler(0f, 0f, -90f));
-
-
-        yield return new WaitForSeconds(0.5f);
-        new GameObject("Fractal Child")
-            .AddComponent<Fractal>()
-            .InitializeChild(this, Vector3.left, Quaternion.Euler(0f, 0f, 90f));
-
+        for(int i=0; i < _childDirections.Length; i++)
+        {
+            yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
+            new GameObject("Fractal Child")
+                .AddComponent<Fractal>()
+                .InitializeChild(this, i);
+        }
     }
 
     /// <summary>
@@ -88,7 +97,7 @@ public class Fractal : MonoBehaviour
     /// some values from the parent and increase the depth
     /// </summary>
     /// <param name="parent">GameObject to add a new Fractal child to</param>
-    private void InitializeChild(Fractal parent, Vector3 direction, Quaternion orientation)
+    private void InitializeChild(Fractal parent, int childIndex)
     {
         this.Mesh = parent.Mesh;
         this.Material = parent.Material;
@@ -102,8 +111,8 @@ public class Fractal : MonoBehaviour
 
         this.transform.localScale = Vector3.one * this.ChildScale;
 
-        this.transform.localPosition = direction * (0.5f + 0.5f * this.ChildScale);
+        this.transform.localPosition = _childDirections[childIndex] * (0.5f + 0.5f * this.ChildScale);
 
-        this.transform.rotation = orientation;
+        this.transform.rotation = _childOrientations[childIndex];
     }
 }
