@@ -21,8 +21,11 @@ public class Fractal : MonoBehaviour
     /// we use this property
     /// </summary>
     public int MaxDepth;
+        
+    public float ChildScale;
 
     private int _depth;
+
 
     // Start is called before the first frame update
     void Start()
@@ -56,10 +59,15 @@ public class Fractal : MonoBehaviour
         this.Mesh = parent.Mesh;
         this.Material = parent.Material;
         this.MaxDepth = parent.MaxDepth;
+        this.ChildScale = parent.ChildScale;
         this._depth = parent._depth + 1;
 
         // The parent–child relationship between game objects is 
         // defined by their transformation hierarchy.
         this.transform.parent = parent.transform;
+
+        this.transform.localScale = Vector3.one * this.ChildScale;
+
+        this.transform.localPosition = Vector3.up * (0.5f + 0.5f * this.ChildScale);
     }
 }
